@@ -3,6 +3,7 @@ import { books } from '@/mock/books';
 import { computed, onMounted } from 'vue';
 import { useBookStore } from '@/stores/bookStore';
 import Book from '@/components/Book.vue';
+
 const store = useBookStore();
 
 onMounted(() => {

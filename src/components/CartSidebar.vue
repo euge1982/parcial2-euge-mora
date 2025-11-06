@@ -1,8 +1,17 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue'
+import { useCartSore } from '@/stores/cartStore';
+import { defineProps, defineEmits, computed } from 'vue'
 
 const props = defineProps<{ open: boolean }>()
 const emit = defineEmits(['close'])
+
+//Traigo el carro
+const cart = useCartSore();
+
+//Propiedades computadas para totales
+const totalBooks = computed(() => cart.totalBooks);
+const totalPrice = computed(() => cart.totalPrice);
+
 </script>
 
 <template>
@@ -26,13 +35,16 @@ const emit = defineEmits(['close'])
 
         <!-- Lista de libros -->
         <div class="flex-1 overflow-y-auto p-4 space-y-4">
-            <div v-for="n in 3" :key="n"
+            <div v-for="book in cart.data" :key="book.id"
                 class="flex items-center justify-between bg-emerald-50 border border-emerald-100 p-3 rounded-lg">
                 <div>
-                    <h3 class="font-medium text-gray-800">Libro {{ n }}</h3>
-                    <p class="text-sm text-gray-500">$ {{ n * 2000 }}</p>
+                    <h3 class="font-medium text-gray-800">Libro: {{ book.title }}</h3>
+                    <p class="text-sm text-gray-500">$ {{ book.price}}</p>
+                    <!--Agregue la cantidad, para ver cuantas veces esta el libro en el carro-->
+                    <p class="text-sm text-gray-500">Cantidad: {{ book.qty}}</p>
                 </div>
-                <button class="text-red-500 hover:text-red-700">
+                <button class="text-red-500 hover:text-red-700"
+                    @click="cart.removeBook(book.id)">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -46,12 +58,20 @@ const emit = defineEmits(['close'])
         <div class="p-4 border-t border-gray-200 bg-emerald-100">
             <div class="flex justify-between mb-2">
                 <span class="font-medium text-gray-700">Total de items:</span>
-                <span>3</span>
+                <span>{{ totalBooks }}</span>
             </div>
             <div class="flex justify-between mb-4">
                 <span class="font-medium text-gray-700">Total:</span>
-                <span class="font-semibold text-emerald-700">$6000</span>
+                <span class="font-semibold text-emerald-700">{{ totalPrice }}</span>
             </div>
+
+            <!--Agregue el boton Anular compra que limpia el carrito
+                pero solo aparece si hay libros en el carro-->
+             <button v-if="totalBooks > 0" @click="cart.clearCart()"
+                class="w-full bg-emerald-600 text-white py-2 rounded-lg hover:bg-emerald-700 transition mb-4">
+                Anular compra
+            </button>
+            
             <button class="w-full bg-emerald-600 text-white py-2 rounded-lg hover:bg-emerald-700 transition">
                 Finalizar compra
             </button>

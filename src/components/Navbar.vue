@@ -1,8 +1,16 @@
 <script setup lang="ts">
 
-import { defineEmits, ref } from 'vue'
-const emit = defineEmits(['toggle-cart'])
-const isOpen = ref(false)
+import { defineEmits, ref, computed } from 'vue';
+import { useCartSore } from '@/stores/cartStore';   //Importo el store
+
+const emit = defineEmits(['toggle-cart']);
+const isOpen = ref(false);
+
+//El store del carrito
+const cart = useCartSore();
+
+//Total de Libros con computed
+const cantidadLibros = computed(() => cart.totalBooks)
 
 </script>
 
@@ -18,15 +26,17 @@ const isOpen = ref(false)
             </div>
 
             <div class="flex items-center space-x-2">
+                
                 <!-- Botón carrito -->
                 <button @click="emit('toggle-cart')"
                     class="relative p-2 bg-emerald-700 rounded-sm hover:bg-emerald-800">
 
                     <!-- ACA INDICAMOS EN EL ICONO DEL CARRO CUANTOS LIBROS HAY EN EL CARRO -->
                     <!-- CAMBIAR 'false' por sintaxis: si hay mas de 0 -> true -->
-                    <div v-if="false"
+                    <div v-if="cantidadLibros > 0"
                         class="p-1 h-4 bg-red-600 rounded-full text-white absolute z-10 -top-2 -right-2 flex justify-center items-center text-sm font-semibold">
                         <!-- VARIABLE PARA INDICAR CANTIDAD VA ACA -->
+                         {{ cantidadLibros }}
                     </div>
 
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"
